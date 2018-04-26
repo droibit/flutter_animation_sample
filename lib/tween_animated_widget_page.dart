@@ -20,11 +20,14 @@ class _TweenAnimatedWidgetPageState extends State<TweenAnimatedWidgetPage>
       duration: Duration(milliseconds: 2000),
       vsync: this,
     );
-    _animation = Tween(
-      begin: 0.0,
-      end: 300.0,
-    ).animate(_controller)
-      ..addStatusListener((status) {
+//    _animation = Tween(
+//      begin: 0.0,
+//      end: 300.0,
+//    ).animate(_controller)
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeIn,
+    )..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           _controller.reverse();
         } else if (status == AnimationStatus.dismissed) {
@@ -53,6 +56,9 @@ class _TweenAnimatedWidgetPageState extends State<TweenAnimatedWidgetPage>
 }
 
 class _AnimatedLogo extends AnimatedWidget {
+  static final _opacityTween = Tween(begin: 0.0, end: 1.0);
+  static final _sizeTween = Tween(begin: 0.0, end: 300.0);
+
   const _AnimatedLogo({
     Key key,
     @required Animation<double> animation,
@@ -62,11 +68,14 @@ class _AnimatedLogo extends AnimatedWidget {
   Widget build(BuildContext context) {
     final Animation<double> animation = listenable;
     return Center(
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 10.0),
-        height: animation.value,
-        width: animation.value,
-        child: FlutterLogo(),
+      child: Opacity(
+        opacity: _opacityTween.evaluate(animation),
+        child: Container(
+          margin: EdgeInsets.symmetric(vertical: 10.0),
+          height: _sizeTween.evaluate(animation),
+          width: _sizeTween.evaluate(animation),
+          child: FlutterLogo(),
+        ),
       ),
     );
   }
